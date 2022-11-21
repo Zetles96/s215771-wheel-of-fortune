@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">wheel-of-fortune</string>
+    <string name="app_name">s215771 Lykkehjulet</string>
+    <string name="welcome_to_the_wheel_of_fortune">Welcome to the Wheel of Fortune</string>
+    <string name="spin_button_text">Spin the Wheel of Fortune</string>
 </resources>
