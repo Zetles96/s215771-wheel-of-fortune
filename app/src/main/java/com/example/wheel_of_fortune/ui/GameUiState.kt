@@ -1,4 +1,11 @@
 package com.example.wheel_of_fortune.ui
 
-class GameUiState {
-}
+/**
+ * Data class thingy
+ */
+data class GameUiState(
+    var currentWord: String = " ",
+    var points: Int = 0,
+    var lives: Int = 5,
+    var isGameOver: Boolean = false,
+)

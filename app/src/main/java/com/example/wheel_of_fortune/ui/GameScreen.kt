@@ -77,7 +77,7 @@ fun Status(modifier: Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuessAndSubmitLetter(modifier: Modifier) {
-    val textOnlyRegex = remember { Regex("[A-Z]*") }
+    val textOnlyRegex = remember { Regex("[a-zA-Z]*") }
     Column(modifier = Modifier) {
         var text by remember { mutableStateOf("") }
         OutlinedTextField(

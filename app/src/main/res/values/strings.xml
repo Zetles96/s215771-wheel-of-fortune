@@ -3,7 +3,7 @@
     <string name="welcome_to_the_wheel_of_fortune">Welcome to the Wheel of Fortune</string>
     <string name="spin_button_text">Spin the Wheel of Fortune</string>
     <string name="submit">Submit</string>
-    <string name="writeLetter">Write one letter</string>
+    <string name="writeLetter">Write only one letter.</string>
     <string name="input">Input</string>
     <string name="life">Life: %d</string>
     <string name="points">Points: %d</string>
