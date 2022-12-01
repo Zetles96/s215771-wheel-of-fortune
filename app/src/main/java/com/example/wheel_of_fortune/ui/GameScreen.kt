@@ -48,15 +48,13 @@ fun PlayerInfo(modifier: Modifier) {
             .size(48.dp),
     ) {
         Text(
-
-
             text = stringResource(R.string.life, 5), fontSize = 18.sp,
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End),
-            text = stringResource(R.string.points, 10),
+            text = stringResource(R.string.points, 0),
             fontSize = 18.sp,
         )
     }
@@ -71,7 +69,20 @@ fun SpinTheWheelButton(modifier: Modifier) {
 
 @Composable
 fun Status(modifier: Modifier) {
-    Text(text = stringResource(R.string.statis))
+    Column(modifier = Modifier) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center),
+            text = "Points from the wheel"
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center),
+            text = "*************"
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,9 +126,6 @@ private fun FinishedGame(
 
     AlertDialog(
         onDismissRequest = {
-            // Dismiss the dialog when the user clicks outside the dialog or on the back
-            // button. If you want to disable that functionality, simply use an empty
-            // onCloseRequest.
         },
         title = { Text(text = "something when the game is done") },
         text = { Text(text = "you got this many points") },

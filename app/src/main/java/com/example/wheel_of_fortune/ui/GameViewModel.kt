@@ -7,19 +7,34 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import com.example.wheel_of_fortune.data.wordArray
+import com.example.wheel_of_fortune.data.categoryArray
 
 class GameViewModel : ViewModel() {
+    // State of the game ui
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
     var guessLetter by mutableStateOf("")
         private set
 
+    // State of words to guess and shown word
+    private lateinit var guessWord: String
+    private lateinit var guessCategory: String
+
     init {
         resetGame()
     }
 
     private fun resetGame() {
-        TODO("Not yet implemented")
+        _uiState.value = GameUiState(shownWord = pickWordAndGenerateUnguessedWord())
+    }
+
+    // picks a random word and then returns a string filled with * that is the same length as the word
+    private fun pickWordAndGenerateUnguessedWord(): String {
+        val random = (0 until wordArray.size).random()
+        guessWord = wordArray[random].uppercase()
+        guessCategory = categoryArray[random]
+        return "*".repeat(wordArray.size)
     }
 }
