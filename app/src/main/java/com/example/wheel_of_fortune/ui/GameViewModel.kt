@@ -31,7 +31,7 @@ class GameViewModel : ViewModel() {
         resetGame()
     }
 
-    private fun resetGame() {
+    fun resetGame() {
         _uiState.value = GameUiState(shownWord = pickWordAndGenerateUnguessedWord())
     }
 
@@ -44,34 +44,72 @@ class GameViewModel : ViewModel() {
         return "*".repeat(guessWord.length)
     }
 
+    // Spins the Wheel of fortune
+    private val wheelOption = intArrayOf(-1, -1, -1, 300, 400, 500)
+    fun spinTheWheel() {
+        _uiState.update { currentState ->
+            currentState.copy(wheelPoints = wheelOption.random())
+        }
+        if (_uiState.value.wheelPoints == -1) {
+            _uiState.update { currentState -> currentState.copy(points = 0) }
+        } else {
+            changeSpinFace()
+        }
+    }
+
+    fun changeSpinFace() {
+        _uiState.update { currestState -> currestState.copy(isSpinFace = !_uiState.value.isSpinFace) }
+    }
+
     fun checkUserGuess() {
         if (guessWord.contains(userGuess, ignoreCase = true) && !_uiState.value.shownWord.contains(
                 userGuess,
                 ignoreCase = true
             )
         ) {
-            val letter_indexes = arrayListOf<Int>()
+            val letterIndexes = arrayListOf<Int>()
             for (i in guessWord.indices) {
                 if (userGuess.first() == guessWord[i])
-                    letter_indexes.add(i)
+                    letterIndexes.add(i)
             }
-            for (i in letter_indexes.indices) {
+            for (i in letterIndexes.indices) {
                 _uiState.update { currentState ->
                     currentState.copy(
                         shownWord = _uiState.value.shownWord.substring(
                             0,
-                            letter_indexes[i]
-                        ) + userGuess + _uiState.value.shownWord.substring(letter_indexes[i] + 1)
+                            letterIndexes[i]
+                        ) + userGuess + _uiState.value.shownWord.substring(letterIndexes[i] + 1)
                     )
                 }
             }
-            _uiState.update { currentState -> currentState.copy(points = _uiState.value.points + 100 * letter_indexes.size) }
+            _uiState.update { currentState -> currentState.copy(points = _uiState.value.points + 100 * letterIndexes.size) }
+            if (!_uiState.value.shownWord.contains("*")) {
+                winGame()
+            }
         } else {
             _uiState.update { currentState ->
                 currentState.copy(lives = _uiState.value.lives - 1)
             }
+            if (_uiState.value.lives == 0) {
+                endGame()
+            }
+
         }
         updateUserGuess("")
+        changeSpinFace()
+    }
+
+    private fun endGame() {
+        _uiState.update { currentState ->
+            currentState.copy(isGameOver = true)
+        }
+    }
+
+    private fun winGame() {
+        _uiState.update { currentState ->
+            currentState.copy(isGameWon = true)
+        }
+        endGame()
+
     }
 }
-

@@ -30,6 +30,7 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
         ) {
         PlayerInfo(life = gameUiState.lives, points = gameUiState.points, modifier = Modifier)
         SpinTheWheelButton(
+            spinButtonClick = { gameViewModel.spinTheWheel() },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center)
@@ -49,7 +50,13 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
                 .wrapContentSize(Alignment.Center),
         )
     }
+    if (gameUiState.isGameOver) {
 
+        FinishedGame(
+            score = gameUiState.points,
+            isGameWon = gameUiState.isGameWon,
+            onPlayAgain = { gameViewModel.resetGame() })
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,8 +82,8 @@ fun PlayerInfo(life: Int, points: Int, modifier: Modifier) {
 }
 
 @Composable
-fun SpinTheWheelButton(modifier: Modifier) {
-    Button(onClick = { /*TODO*/ }) {
+fun SpinTheWheelButton(spinButtonClick: () -> Unit, modifier: Modifier) {
+    Button(onClick = spinButtonClick) {
         Text(text = stringResource(R.string.spin_button_text))
     }
 }
@@ -140,13 +147,21 @@ fun GuessAndSubmitLetter(
 
 @Composable
 private fun FinishedGame(
-    onPlayAgain: () -> Unit, modifier: Modifier = Modifier
+    score: Int,
+    isGameWon: Boolean,
+    onPlayAgain: () -> Unit, modifier: Modifier = Modifier,
 ) {
     val activity = (LocalContext.current as Activity)
 
     AlertDialog(onDismissRequest = {},
-        title = { Text(text = "something when the game is done") },
-        text = { Text(text = "you got this many points") },
+        title = {
+            if (isGameWon) {
+                Text(text = stringResource(R.string.wongame))
+            } else {
+                Text(text = stringResource(R.string.lostgame))
+            }
+        },
+        text = { Text(text = stringResource(R.string.thismanypoints, score)) },
         modifier = modifier,
         dismissButton = {
             TextButton(onClick = {

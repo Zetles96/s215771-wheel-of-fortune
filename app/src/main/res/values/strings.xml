@@ -9,4 +9,7 @@
     <string name="points">Points: %d</string>
     <string name="exit">Exit the game</string>
     <string name="playAgain">Play again</string>
+    <string name="thismanypoints">you got %d points</string>
+    <string name="wongame">Congratulations, you won the game ╰(*°▽°*)╯</string>
+    <string name="lostgame">You lost all your lives and lost the game ╰(艹皿艹 )</string>
 </resources>
