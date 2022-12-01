@@ -2,6 +2,7 @@ package com.example.wheel_of_fortune.ui
 
 import android.app.Activity
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,12 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.wheel_of_fortune.R
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Preview
 @Composable
-fun GameScreen(modifier: Modifier = Modifier) {
-
+fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = viewModel()) {
+    val gameUiState by gameViewModel.uiState.collectAsState()
     Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         PlayerInfo(modifier = Modifier)
         SpinTheWheelButton(
@@ -28,11 +30,14 @@ fun GameScreen(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center)
         )
-        Status(modifier = Modifier)
+        Status(modifier = Modifier, shownWord = gameUiState.shownWord)
         GuessAndSubmitLetter(
+            onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+            userGuess = gameViewModel.userGuess,
+            onKeyboardDone = { },
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
+                .wrapContentSize(Alignment.Center),
         )
     }
 
@@ -68,7 +73,7 @@ fun SpinTheWheelButton(modifier: Modifier) {
 }
 
 @Composable
-fun Status(modifier: Modifier) {
+fun Status(shownWord: String, modifier: Modifier) {
     Column(modifier = Modifier) {
         Text(
             modifier = Modifier
@@ -80,31 +85,33 @@ fun Status(modifier: Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),
-            text = "*************"
+            text = shownWord
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GuessAndSubmitLetter(modifier: Modifier) {
-    val textOnlyRegex = remember { Regex("[a-zA-Z]*") }
+fun GuessAndSubmitLetter(
+    onUserGuessChanged: (String) -> Unit,
+    onKeyboardDone: () -> Unit,
+    userGuess: String,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = Modifier) {
-        var text by remember { mutableStateOf("") }
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = text,
+            value = userGuess.uppercase(),
             maxLines = 1,
-            onValueChange = {
-                if (it.matches(textOnlyRegex) && it.length <= 1) {
-                    text = it.uppercase()
-                }
-            },
+            onValueChange = onUserGuessChanged,
             label = { Text(text = stringResource(R.string.input)) },
             placeholder = { Text(text = stringResource(R.string.writeLetter)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Characters
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { onKeyboardDone() }
             ),
         )
         Button(modifier = Modifier
