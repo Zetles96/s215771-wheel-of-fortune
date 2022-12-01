@@ -1,15 +1,13 @@
 package com.example.wheel_of_fortune.ui
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.wheel_of_fortune.data.wordArray
 import com.example.wheel_of_fortune.data.categoryArray
+import kotlinx.coroutines.flow.update
 
 class GameViewModel : ViewModel() {
     // State of the game ui
@@ -27,7 +25,7 @@ class GameViewModel : ViewModel() {
 
     // State of words to guess and shown word
     private lateinit var guessWord: String
-    private lateinit var guessCategory: String
+    lateinit var guessCategory: String
 
     init {
         resetGame()
@@ -45,4 +43,35 @@ class GameViewModel : ViewModel() {
         guessCategory = categoryArray[random]
         return "*".repeat(guessWord.length)
     }
+
+    fun checkUserGuess() {
+        if (guessWord.contains(userGuess, ignoreCase = true) && !_uiState.value.shownWord.contains(
+                userGuess,
+                ignoreCase = true
+            )
+        ) {
+            val letter_indexes = arrayListOf<Int>()
+            for (i in guessWord.indices) {
+                if (userGuess.first() == guessWord[i])
+                    letter_indexes.add(i)
+            }
+            for (i in letter_indexes.indices) {
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        shownWord = _uiState.value.shownWord.substring(
+                            0,
+                            letter_indexes[i]
+                        ) + userGuess + _uiState.value.shownWord.substring(letter_indexes[i] + 1)
+                    )
+                }
+            }
+        } else {
+            _uiState.update { currentState ->
+                currentState.copy(lives = _uiState.value.lives - 1)
+            }
+        }
+        updateUserGuess("")
+    }
 }
+
+

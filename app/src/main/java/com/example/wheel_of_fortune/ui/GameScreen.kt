@@ -23,18 +23,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = viewModel()) {
     val gameUiState by gameViewModel.uiState.collectAsState()
-    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        PlayerInfo(modifier = Modifier)
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+
+        ) {
+        PlayerInfo(life = gameUiState.lives, points = gameUiState.points, modifier = Modifier)
         SpinTheWheelButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center)
         )
-        Status(modifier = Modifier, shownWord = gameUiState.shownWord)
+        Status(
+            modifier = Modifier,
+            guessCategory = gameViewModel.guessCategory,
+            shownWord = gameUiState.shownWord
+        )
         GuessAndSubmitLetter(
             onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
             userGuess = gameViewModel.userGuess,
-            onKeyboardDone = { },
+            onKeyboardDone = { gameViewModel.checkUserGuess() },
+            submitGuess = { gameViewModel.checkUserGuess() },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),
@@ -45,7 +54,7 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerInfo(modifier: Modifier) {
+fun PlayerInfo(life: Int, points: Int, modifier: Modifier) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,13 +62,13 @@ fun PlayerInfo(modifier: Modifier) {
             .size(48.dp),
     ) {
         Text(
-            text = stringResource(R.string.life, 5), fontSize = 18.sp,
+            text = stringResource(R.string.life, life), fontSize = 18.sp,
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(Alignment.End),
-            text = stringResource(R.string.points, 0),
+            text = stringResource(R.string.points, points),
             fontSize = 18.sp,
         )
     }
@@ -73,7 +82,7 @@ fun SpinTheWheelButton(modifier: Modifier) {
 }
 
 @Composable
-fun Status(shownWord: String, modifier: Modifier) {
+fun Status(shownWord: String, guessCategory: String, modifier: Modifier) {
     Column(modifier = Modifier) {
         Text(
             modifier = Modifier
@@ -85,7 +94,12 @@ fun Status(shownWord: String, modifier: Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),
-            text = shownWord
+            text = guessCategory
+        )
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center), text = shownWord
         )
     }
 }
@@ -95,6 +109,7 @@ fun Status(shownWord: String, modifier: Modifier) {
 fun GuessAndSubmitLetter(
     onUserGuessChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
+    submitGuess: () -> Unit,
     userGuess: String,
     modifier: Modifier = Modifier
 ) {
@@ -107,17 +122,16 @@ fun GuessAndSubmitLetter(
             label = { Text(text = stringResource(R.string.input)) },
             placeholder = { Text(text = stringResource(R.string.writeLetter)) },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                capitalization = KeyboardCapitalization.Characters
+                keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Characters
             ),
-            keyboardActions = KeyboardActions(
-                onDone = { onKeyboardDone() }
-            ),
+            keyboardActions = KeyboardActions(onDone = { onKeyboardDone() }),
         )
-        Button(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.Center),
-            onClick = { /*TODO*/ }) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentSize(Alignment.Center),
+            onClick = submitGuess
+        ) {
             Text(text = stringResource(R.string.submit))
         }
     }
@@ -126,34 +140,26 @@ fun GuessAndSubmitLetter(
 
 @Composable
 private fun FinishedGame(
-    onPlayAgain: () -> Unit,
-    modifier: Modifier = Modifier
+    onPlayAgain: () -> Unit, modifier: Modifier = Modifier
 ) {
     val activity = (LocalContext.current as Activity)
 
-    AlertDialog(
-        onDismissRequest = {
-        },
+    AlertDialog(onDismissRequest = {},
         title = { Text(text = "something when the game is done") },
         text = { Text(text = "you got this many points") },
         modifier = modifier,
         dismissButton = {
-            TextButton(
-                onClick = {
-                    activity.finish()
-                }
-            ) {
+            TextButton(onClick = {
+                activity.finish()
+            }) {
                 Text(text = stringResource(R.string.exit))
             }
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    onPlayAgain()
-                }
-            ) {
+            TextButton(onClick = {
+                onPlayAgain()
+            }) {
                 Text(text = stringResource(R.string.playAgain))
             }
-        }
-    )
+        })
 }

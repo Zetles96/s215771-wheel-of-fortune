@@ -1,5 +1,5 @@
 package com.example.wheel_of_fortune.data
 
-var wordArray = arrayOf("aaaa")
+var wordArray = arrayOf("APPLE")
 
-var categoryArray = arrayOf("Letter")
+var categoryArray = arrayOf("Fruit")
