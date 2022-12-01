@@ -65,6 +65,7 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
+            _uiState.update { currentState -> currentState.copy(points = _uiState.value.points + 100 * letter_indexes.size) }
         } else {
             _uiState.update { currentState ->
                 currentState.copy(lives = _uiState.value.lives - 1)
@@ -73,5 +74,4 @@ class GameViewModel : ViewModel() {
         updateUserGuess("")
     }
 }
-
 
