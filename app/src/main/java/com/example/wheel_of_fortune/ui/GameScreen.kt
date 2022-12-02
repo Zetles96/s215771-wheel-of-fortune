@@ -26,29 +26,33 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-
         ) {
         PlayerInfo(life = gameUiState.lives, points = gameUiState.points, modifier = Modifier)
-        SpinTheWheelButton(
-            spinButtonClick = { gameViewModel.spinTheWheel() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
-        )
+        if (gameUiState.isSpinFace) {
+            SpinTheWheelButton(
+                spinButtonClick = { gameViewModel.spinTheWheel() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center)
+            )
+        }
         Status(
             modifier = Modifier,
             guessCategory = gameViewModel.guessCategory,
-            shownWord = gameUiState.shownWord
+            shownWord = gameUiState.shownWord,
+            pointsFromWheel = gameUiState.wheelPoints
         )
-        GuessAndSubmitLetter(
-            onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
-            userGuess = gameViewModel.userGuess,
-            onKeyboardDone = { gameViewModel.checkUserGuess() },
-            submitGuess = { gameViewModel.checkUserGuess() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-        )
+        if (!gameUiState.isSpinFace) {
+            GuessAndSubmitLetter(
+                onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
+                userGuess = gameViewModel.userGuess,
+                onKeyboardDone = { gameViewModel.checkUserGuess() },
+                submitGuess = { gameViewModel.checkUserGuess() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center),
+            )
+        }
     }
     if (gameUiState.isGameOver) {
 
@@ -89,14 +93,25 @@ fun SpinTheWheelButton(spinButtonClick: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun Status(shownWord: String, guessCategory: String, modifier: Modifier) {
+fun Status(shownWord: String, guessCategory: String,pointsFromWheel: Int ,modifier: Modifier) {
     Column(modifier = Modifier) {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-            text = "Points from the wheel"
-        )
+        if (pointsFromWheel > -1) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center),
+                text = stringResource(R.string.pointsFromWheel, pointsFromWheel)
+            )
+        }
+        else{
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(Alignment.Center),
+                text = stringResource(R.string.bankrupt)
+            )
+        }
+
         Text(
             modifier = Modifier
                 .fillMaxWidth()

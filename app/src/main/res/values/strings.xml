@@ -12,4 +12,6 @@
     <string name="thismanypoints">you got %d points</string>
     <string name="wongame">Congratulations, you won the game ╰(*°▽°*)╯</string>
     <string name="lostgame">You lost all your lives and lost the game ╰(艹皿艹 )</string>
+    <string name="pointsFromWheel">Points from the wheel %d</string>
+    <string name="bankrupt">You went bankrupt and loose all your points</string>
 </resources>

@@ -45,7 +45,7 @@ class GameViewModel : ViewModel() {
     }
 
     // Spins the Wheel of fortune
-    private val wheelOption = intArrayOf(-1, -1, -1, 300, 400, 500)
+    private val wheelOption = intArrayOf(-1, 100, 200, 300, 400, 500)
     fun spinTheWheel() {
         _uiState.update { currentState ->
             currentState.copy(wheelPoints = wheelOption.random())
@@ -53,11 +53,12 @@ class GameViewModel : ViewModel() {
         if (_uiState.value.wheelPoints == -1) {
             _uiState.update { currentState -> currentState.copy(points = 0) }
         } else {
+
             changeSpinFace()
         }
     }
 
-    fun changeSpinFace() {
+    private fun changeSpinFace() {
         _uiState.update { currestState -> currestState.copy(isSpinFace = !_uiState.value.isSpinFace) }
     }
 
@@ -82,7 +83,7 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
-            _uiState.update { currentState -> currentState.copy(points = _uiState.value.points + 100 * letterIndexes.size) }
+            _uiState.update { currentState -> currentState.copy(points = _uiState.value.points + _uiState.value.wheelPoints * letterIndexes.size) }
             if (!_uiState.value.shownWord.contains("*")) {
                 winGame()
             }
