@@ -18,7 +18,11 @@ import androidx.compose.ui.unit.sp
 import com.example.wheel_of_fortune.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-
+/**
+ * Main screen component, and holds all the sub components and passes the viewModel down to the components
+ * @param modifier
+ * @param gameViewModel
+ */
 @Preview
 @Composable
 fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = viewModel()) {
@@ -26,7 +30,7 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    ) {
         PlayerInfo(life = gameUiState.lives, points = gameUiState.points, modifier = Modifier)
         if (gameUiState.isSpinFace) {
             SpinTheWheelButton(
@@ -63,6 +67,12 @@ fun GameScreen(modifier: Modifier = Modifier, gameViewModel: GameViewModel = vie
     }
 }
 
+/**
+ * composable for the player information at the top of the screen
+ * @param life the players life
+ * @param points the players current points
+ * @param modifier
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerInfo(life: Int, points: Int, modifier: Modifier) {
@@ -85,6 +95,11 @@ fun PlayerInfo(life: Int, points: Int, modifier: Modifier) {
     }
 }
 
+/**
+ * Composable button for spinning the wheel
+ * @param spinButtonClick lambda expression for what happens when spinning the wheel
+ * @param modifier
+ */
 @Composable
 fun SpinTheWheelButton(spinButtonClick: () -> Unit, modifier: Modifier) {
     Button(onClick = spinButtonClick) {
@@ -92,8 +107,16 @@ fun SpinTheWheelButton(spinButtonClick: () -> Unit, modifier: Modifier) {
     }
 }
 
+/**
+ * Composable for showing the game status, like the nonguessed word, the category, and the points
+ * you will get if you guess correctly
+ * @param shownWord
+ * @param guessCategory
+ * @param pointsFromWheel
+ * @param modifier
+ */
 @Composable
-fun Status(shownWord: String, guessCategory: String,pointsFromWheel: Int ,modifier: Modifier) {
+fun Status(shownWord: String, guessCategory: String, pointsFromWheel: Int, modifier: Modifier) {
     Column(modifier = Modifier) {
         if (pointsFromWheel > -1) {
             Text(
@@ -102,8 +125,7 @@ fun Status(shownWord: String, guessCategory: String,pointsFromWheel: Int ,modifi
                     .wrapContentSize(Alignment.Center),
                 text = stringResource(R.string.pointsFromWheel, pointsFromWheel)
             )
-        }
-        else{
+        } else {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,6 +148,13 @@ fun Status(shownWord: String, guessCategory: String,pointsFromWheel: Int ,modifi
     }
 }
 
+/**
+ * Composable for taking an input from the user and submitting it
+ * @param onUserGuessChanged handles state for the input in textbox
+ * @param onKeyboardDone also method for submitting the guess
+ * @param submitGuess method for submitting the guess
+ * @param modifier
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GuessAndSubmitLetter(
@@ -160,6 +189,13 @@ fun GuessAndSubmitLetter(
 
 }
 
+/**
+ * Alert dialog for when the game is finished, where you can play again or finish the game, and shows
+ * final score and whether you have won
+ * @param score players score
+ * @param isGameWon whether the player won or lost
+ * @param onPlayAgain method for if the player wants to play again
+ */
 @Composable
 private fun FinishedGame(
     score: Int,

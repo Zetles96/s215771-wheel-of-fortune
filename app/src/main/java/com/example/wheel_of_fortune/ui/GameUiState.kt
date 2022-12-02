@@ -1,7 +1,7 @@
 package com.example.wheel_of_fortune.ui
 
 /**
- * Data class thingy
+ * Data class for the ui state
  */
 data class GameUiState(
     val shownWord: String = "",

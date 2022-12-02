@@ -9,14 +9,25 @@ import com.example.wheel_of_fortune.data.wordArray
 import com.example.wheel_of_fortune.data.categoryArray
 import kotlinx.coroutines.flow.update
 
+/**
+ * GameViewModel class, that inherits from the viewmodel class, and basically has all the logic of
+ * the game. and handles the state
+ */
 class GameViewModel : ViewModel() {
     // State of the game ui
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
+
+    // userguess variable for keyboard stuff
     var userGuess by mutableStateOf("")
         private set
 
+    /**
+     * updates the userguess and validates it with a regular expression to make sure it's a letter
+     * and not an integer, and also makes sure that the length is only one character
+     * @param guessedWord single character
+     */
     fun updateUserGuess(guessedWord: String) {
         val textOnlyRegex = Regex("[a-zA-Z]*")
         if (guessedWord.matches(textOnlyRegex) && guessedWord.length <= 1)
@@ -27,25 +38,36 @@ class GameViewModel : ViewModel() {
     private lateinit var guessWord: String
     lateinit var guessCategory: String
 
+    // what happens at the start of the game
     init {
         resetGame()
     }
 
+    /**
+     * resets the game state, at the start of the game and when you want to play again
+     */
     fun resetGame() {
         _uiState.value = GameUiState(shownWord = pickWordAndGenerateUnguessedWord())
     }
 
-
-    // picks a random word and then returns a string filled with * that is the same length as the word
+    /**
+     * picks a random word and then returns a string filled with * that is the same length as the word
+     * @return string of stars for a word to guess
+     */
+    //
     private fun pickWordAndGenerateUnguessedWord(): String {
-        val random = (0 until wordArray.size).random()
+        val random = (wordArray.indices).random()
         guessWord = wordArray[random].uppercase()
         guessCategory = categoryArray[random]
         return "*".repeat(guessWord.length)
     }
 
-    // Spins the Wheel of fortune
+    // wheel options array
     private val wheelOption = intArrayOf(-1, 100, 200, 300, 400, 500)
+
+    /**
+     * Spins the wheel, and set the state of points you get from the wheel
+     */
     fun spinTheWheel() {
         _uiState.update { currentState ->
             currentState.copy(wheelPoints = wheelOption.random())
@@ -58,10 +80,18 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    /**
+     * changes the face between spinning and guessing
+     */
     private fun changeSpinFace() {
         _uiState.update { currestState -> currestState.copy(isSpinFace = !_uiState.value.isSpinFace) }
     }
 
+    /**
+     * Check if the user guess is correct, and if the user guess is wrong, you loose a life, and if
+     * i's right you gain points * how many questions was right, and replaces * with the letters that
+     * are correctly guessed
+     */
     fun checkUserGuess() {
         if (guessWord.contains(userGuess, ignoreCase = true) && !_uiState.value.shownWord.contains(
                 userGuess,
@@ -100,12 +130,18 @@ class GameViewModel : ViewModel() {
         changeSpinFace()
     }
 
+    /**
+     * Method that ends the game
+     */
     private fun endGame() {
         _uiState.update { currentState ->
             currentState.copy(isGameOver = true)
         }
     }
 
+    /**
+     * Method that wins and end the game
+     */
     private fun winGame() {
         _uiState.update { currentState ->
             currentState.copy(isGameWon = true)
