@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">wheel-of-fortune</string>
+    <string name="app_name">s215771 Lykkehjulet</string>
+    <string name="welcome_to_the_wheel_of_fortune">Welcome to the Wheel of Fortune</string>
+    <string name="spin_button_text">Spin the Wheel of Fortune</string>
+    <string name="submit">Submit</string>
+    <string name="writeLetter">Write only one letter.</string>
+    <string name="input">Input</string>
+    <string name="life">Life: %d</string>
+    <string name="points">Points: %d</string>
+    <string name="exit">Exit the game</string>
+    <string name="playAgain">Play again</string>
+    <string name="thismanypoints">you got %d points</string>
+    <string name="wongame">Congratulations, you won the game ╰(*°▽°*)╯</string>
+    <string name="lostgame">You lost all your lives and lost the game ╰(艹皿艹 )</string>
+    <string name="pointsFromWheel">Points from the wheel %d</string>
+    <string name="bankrupt">You went bankrupt and loose all your points</string>
 </resources>
